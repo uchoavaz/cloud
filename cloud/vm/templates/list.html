@@ -1,0 +1,42 @@
+{% extends 'menu.html' %}
+
+{% block content %}
+
+<style type="text/css">
+
+.dist{
+    margin-bottom: 5%; 
+}
+
+</style>
+
+<div class="container">
+  {% for user_droplet in object_list %}
+    <div class="pricing-table">
+        <div class="pricing-table-header">
+            <h1>{{user_droplet.ip}}</h1>
+        </div>
+        
+        <div class="pricing-table-content">
+            <ul>
+                <li><strong>{{user_droplet.droplet.memory}} MB</strong> Memória</li>
+                <li><strong>{{user_droplet.droplet.processor}} Core</strong> CPU</li>
+                {% if user_droplet.is_active %}
+                <li><strong>Ativo</strong></li>
+                {% else %}
+                <li><strong>Inativo</strong></li>
+                {% endif %}
+
+            </ul>
+        </div>
+        
+            <div class="col-md-8 col-md-offset-2 col-xs-3 dist" >
+                <a href="">
+                    <button type="button" class="btn btn-primary btn btn-danger btn-lg btn-block">Excluir</button>
+                </a>
+            </div>
+    </div>
+   {% endfor %}
+
+
+{% endblock %}
