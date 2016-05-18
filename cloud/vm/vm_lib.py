@@ -21,7 +21,7 @@ VARIABLES = [
     'endconfigmachine'
 ]
 
-class VM():
+class VMCreation():
     name = None
     ip = None
     image = None
@@ -83,3 +83,27 @@ class VM():
         vagrantfile.write('end')
         vagrantfile.close()
         os.system("vagrant up")
+
+
+class VMDeletion():
+    initial_path = None
+    name = None
+
+    def vm_name(self, name):
+        self.name = name
+        self.initial_path = os.getcwd()
+
+    def remove(self):
+        halt_command = "vagrant halt"
+        delete_folder_command = "rm -rf {0}"
+        remove_command = "vagrant box remove {0}"
+        if os.path.isdir("machines"):
+            os.chdir(os.getcwd() + "/machines")
+            print (os.getcwd())
+            if os.path.isdir(self.name):
+                os.chdir(os.getcwd() + "/" + self.name)
+                os.system(halt_command)
+                os.chdir("..")
+                os.system(delete_folder_command.format(self.name))
+                os.system(remove_command.format(self.name))
+                os.chdir(self.initial_path)

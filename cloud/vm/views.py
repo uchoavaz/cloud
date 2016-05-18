@@ -3,11 +3,13 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import ListView
-from .vm_lib import VM
+from django.views.generic import RedirectView
+from django.views.generic import DeleteView
 from .models import Droplet
-from .models import StateDroplet
+from .models import AvailableIps
 from .models import UserDroplet
-from .tasks import teste
+from .tasks import create_vm
+from .tasks import remove_vm
 
 
 class DropletsView(ListView):
@@ -25,36 +27,45 @@ class ListView(ListView):
         return queryset
 
 
-def create_droplet(request, pk):
-    droplet = Droplet.objects.get(pk=pk)
-    state_droplet = StateDroplet.objects.all()[0]
-    vm_pool = state_droplet.pool_ip
-    available_ip = state_droplet.available_ip
+class CreateDropletView(RedirectView):
+    url = reverse_lazy('vm:list')
 
-    if available_ip > 0:
-        vm_num = state_droplet.last_droplet_id
-        vm_ip_3 = state_droplet.ip_3
-        vm_ip_4 = state_droplet.last_ip_4
+    def get(self, request, *args, **kwargs):
+        url = self.get_redirect_url(**kwargs)
+        if url:
 
-        ip = "192.168.{0}.{1}".format(vm_ip_3, vm_ip_4)
-        name = "vm_{0}".format(vm_num)
+            droplet = Droplet.objects.get(pk=self.kwargs.get('pk'))
+            ip_disponivel = AvailableIps.objects.filter(is_available=True)
 
-        teste.delay(name, ip, droplet)
+            if ip_disponivel.exists():
 
-        StateDroplet.objects.all().update(
-            last_droplet_id=(vm_num + 1),
-            last_ip_4=(vm_ip_4 + 1),
-            available_ip=(vm_pool - 1)
-        )
+                ip = ip_disponivel[0].ip
+                name = ip_disponivel[0].ip
 
-        UserDroplet.objects.create(
-            user=request.user,
-            droplet=droplet,
-            ip=ip,
-            name=name,
-            is_active=True
-        )
-    return redirect(reverse_lazy('vm:list'))
+                create_vm.delay(name, ip, droplet)
+
+                ip_disponivel.filter(ip=ip).update(is_available=False)
+
+                UserDroplet.objects.create(
+                    user=self.request.user,
+                    droplet=droplet,
+                    ip=ip,
+                    name=name,
+                    is_active=True
+                )
+            return redirect(url)
+
+
+class RemoveDropletView(DeleteView):
+    model = UserDroplet
+    success_url = reverse_lazy('vm:list')
+
+    def get(self, *args, **kwargs):
+        vm_name = self.get_queryset().get().name
+        remove_vm.delay(vm_name)
+        return self.post(*args, **kwargs)
 
 droplets = DropletsView.as_view()
 lista = ListView.as_view()
+create_droplet = CreateDropletView.as_view()
+remove_droplet = RemoveDropletView.as_view()

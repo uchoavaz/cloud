@@ -32,7 +32,7 @@ class UserDroplet(models.Model):
         related_name="user_droplet")
     droplet = models.ForeignKey(Droplet, related_name="user_droplet")
     name = models.CharField(
-        verbose_name="Nome da VM", unique=True, max_length=5)
+        verbose_name="Nome da VM", unique=True, max_length=15)
     ip = models.CharField(verbose_name="IP", unique=True, max_length=15)
     is_active = models.BooleanField(verbose_name="Ativo", default=False)
 
@@ -40,16 +40,18 @@ class UserDroplet(models.Model):
         verbose_name = (u'Usuário máquina')
         verbose_name_plural = (u'Usuários máquinas')
 
-class StateDroplet(models.Model):
-    last_droplet_id = models.IntegerField(
-        verbose_name="Id da última VM", default=0)
-    ip_3 = models.IntegerField(verbose_name="Penúltimo IP", default=0)
-    last_ip_4 = models.IntegerField(verbose_name="Último IP usado", default=0)
-    pool_ip = models.IntegerField(verbose_name="Total de IP's", default=10)
-    available_ip = models.IntegerField(
-        verbose_name="IP's disponíveis", default=10)
 
+class AvailableIps(models.Model):
+    user = models.ForeignKey(
+        CloudUser,
+        verbose_name=u"Usuário",
+        related_name="droplet_ip",
+        null=True,
+        blank=True)
+    ip = models.CharField(verbose_name="IP", max_length=15)
+    is_available = models.BooleanField(
+        verbose_name="Disponivel ?", default=True)
 
     class Meta:
-        verbose_name = (u'Estado da VM')
-        verbose_name_plural = (u"Estados das VM's")
+        verbose_name = (u'IP disponível')
+        verbose_name_plural = (u"IP's disponíveis")
