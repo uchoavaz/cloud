@@ -21,22 +21,36 @@
             <ul>
                 <li><strong>{{user_droplet.droplet.memory}} MB</strong> Memória</li>
                 <li><strong>{{user_droplet.droplet.processor}} Core</strong> CPU</li>
-                {% if user_droplet.is_active %}
-                <li><strong>Ativo</strong></li>
-                {% else %}
-                <li><strong>Inativo</strong></li>
-                {% endif %}
-
+                <li><strong>{{user_droplet.get_status_display}}</strong></li>
             </ul>
         </div>
         
             <div class="col-md-8 col-md-offset-2 col-xs-3 dist" >
-                <a href="{% url 'vm:remove_droplet' user_droplet.pk %}">
-                    <button type="button" class="btn btn-primary btn btn-danger btn-lg btn-block">Excluir</button>
-                </a>
+                    <button type="button" {% if user_droplet.can_remove %}{% else %} disabled="disabled" {% endif %}class="btn btn-primary btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#{{user_droplet.pk}}">Excluir</button>
             </div>
+
     </div>
+
+    <div class="modal fade " id="{{user_droplet.pk}}" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+          <div class="modal-body">
+                <center><h3>Você realmente deseja exlcuir ?</h3></center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+            <a href="{% url 'vm:remove_droplet' user_droplet.pk %}">
+               <button type="button" class="btn btn-success">Sim</button>
+            </a>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
    {% endfor %}
+
+<!-- Large modal -->
+
 
 
 {% endblock %}

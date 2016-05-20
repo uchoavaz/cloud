@@ -6,6 +6,13 @@ from django.db import models
 from accounts.models import CloudUser
 
 
+STATUS_CHOICES = (
+    (1, 'Inativo'),
+    (2, 'Ativo'),
+    (3, u'Criando Máquina Virtual')
+
+)
+
 class Droplet(models.Model):
     title = models.CharField(
         verbose_name=u"Título",
@@ -25,16 +32,43 @@ class Droplet(models.Model):
         return self.title
 
 
+class Image(models.Model):
+    name = models.CharField(
+        verbose_name="Nome", max_length=30, unique=True)
+    name_path = models.CharField(
+        verbose_name="Nome do caminho", max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = (u'Imagem')
+        verbose_name_plural = (u'Imagens')
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class UserDroplet(models.Model):
     user = models.ForeignKey(
         CloudUser,
         verbose_name=u"Usuário",
         related_name="user_droplet")
-    droplet = models.ForeignKey(Droplet, related_name="user_droplet")
+    droplet = models.ForeignKey(
+        Droplet,
+        verbose_name=u"Droplet",
+        related_name="user_droplet")
+    image = models.ForeignKey(
+        Image,
+        verbose_name="Imagem",
+        related_name="user_droplet")
     name = models.CharField(
         verbose_name="Nome da VM", unique=True, max_length=15)
     ip = models.CharField(verbose_name="IP", unique=True, max_length=15)
-    is_active = models.BooleanField(verbose_name="Ativo", default=False)
+    status = models.IntegerField(
+        verbose_name="Status", choices=STATUS_CHOICES, default=1)
+    can_remove = models.BooleanField(
+        verbose_name="Pode Excluir ?", default=False)
 
     class Meta:
         verbose_name = (u'Usuário máquina')
@@ -48,7 +82,7 @@ class AvailableIps(models.Model):
         related_name="droplet_ip",
         null=True,
         blank=True)
-    ip = models.CharField(verbose_name="IP", max_length=15)
+    ip = models.CharField(verbose_name="IP", max_length=15, unique=True)
     is_available = models.BooleanField(
         verbose_name="Disponivel ?", default=True)
 

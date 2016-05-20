@@ -11,25 +11,38 @@
 
 </style>
 
-<div class="container">
-  {% for droplet in object_list %}
-    <div class="pricing-table">
-        <div class="pricing-table-header">
-            <h1>{{droplet.title}}</h1>
-        </div>
-        
-        <div class="pricing-table-content">
-            <ul>
-                <li><strong>{{droplet.memory}} MB</strong> Memória</li>
-                <li><strong>{{droplet.processor}} Core</strong> CPU</li>
-            </ul>
-        </div>
-        
-            <div class="col-sm-8 col-sm-offset-2 col-xs-3 dist" >
-            <a href="{% url 'vm:create_droplet' droplet.pk %}"><button type="button" class="btn btn-primary btn btn-default btn-lg btn-block">Assinar</button>
-            </div>
-    </div>
-   {% endfor %}
+<form method="get">
+  <div class="container">
+    <h2>Máquina</h2>
 
-
+    {% for droplet in object_list %}
+      <div class="pricing-table">
+          <div class="pricing-table-header">
+              <h1>{{droplet.title}}</h1>
+          </div>
+          <input type="radio" name="droplet" id="optionsRadios1" value="{{droplet.pk}}" checked>
+          <div class="pricing-table-content">
+              <ul>
+                  <li><strong>{{droplet.memory}} MB</strong> Memória</li>
+                  <li><strong>{{droplet.processor}} Core</strong> CPU</li>
+              </ul>
+          </div>
+          
+      </div>
+     {% endfor %}
+     <hr>
+     <h2>Sistema Operacional</h2>
+     
+     {% for image in images %}
+      <div class="radio">
+        <label>
+          <input type="radio" name="image" id="{{image.name}}" value="{{image.pk}}" checked>
+          {{image.name}}
+        </label>
+      </div>
+      {% endfor %}
+      <hr>
+  </div>
+  <button type="submit" class="btn btn-primary btn btn-default btn-lg">Assinar</button>
+</form>
 {% endblock %}

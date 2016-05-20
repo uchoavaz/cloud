@@ -46,7 +46,6 @@ class VMCreation():
         self.commands['vmcpu'] = COMMANDS['vmcpu'].format(cpu)
         self.cpu = cpu
 
-
     def vm_memory(self, memory):
         self.commands['vmmemory'] = COMMANDS['vmmemory'].format(memory)
         self.memory = memory
@@ -106,4 +105,4 @@ class VMDeletion():
                 os.chdir("..")
                 os.system(delete_folder_command.format(self.name))
                 os.system(remove_command.format(self.name))
-                os.chdir(self.initial_path)
+        os.chdir(self.initial_path)
