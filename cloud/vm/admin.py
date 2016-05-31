@@ -14,7 +14,7 @@ class ImageAdmin(admin.ModelAdmin):
 class DropletAdmin(admin.ModelAdmin):
     list_filter = ['title']
     list_display = (
-        'title', 'memory', 'processor')
+        'title', 'memory', 'processor', 'disk', 'cost')
 
 
 class UserDropletAdmin(admin.ModelAdmin):
@@ -25,8 +25,7 @@ class AvailableIpsAdmin(admin.ModelAdmin):
     search_fields = ['ip']
     list_display = (
         'ip',
-        'is_available',
-        'user')
+        'is_available')
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(UserDroplet, UserDropletAdmin)

@@ -11,9 +11,10 @@
 
 </style>
 
+{% if object_list %}
 <form method="get">
   <div class="container">
-    <h2>Máquina</h2>
+    <h2>Máquinas</h2>
 
     {% for droplet in object_list %}
       <div class="pricing-table">
@@ -25,6 +26,8 @@
               <ul>
                   <li><strong>{{droplet.memory}} MB</strong> Memória</li>
                   <li><strong>{{droplet.processor}} Core</strong> CPU</li>
+                  <li><strong>{{droplet.disk}} GB</strong> Disco</li>
+                  <li>$<strong>{{droplet.cost}}</strong></li>
               </ul>
           </div>
           
@@ -45,4 +48,13 @@
   </div>
   <button type="submit" class="btn btn-primary btn btn-default btn-lg">Assinar</button>
 </form>
+
+{% else %}
+  <div class="container">
+    <br>
+    <center><span id="color-advice" >Nenhuma máquina disponível<span></center>
+  </div>
+
+
+{% endif %}
 {% endblock %}

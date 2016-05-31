@@ -7,11 +7,13 @@ from accounts.models import CloudUser
 
 
 STATUS_CHOICES = (
-    (1, 'Inativo'),
-    (2, 'Ativo'),
-    (3, u'Criando Máquina Virtual')
+    (1, 'VM inativa'),
+    (2, 'VM ativa'),
+    (3, 'Criando VM'),
+    (4, 'Editando VM')
 
 )
+
 
 class Droplet(models.Model):
     title = models.CharField(
@@ -20,6 +22,9 @@ class Droplet(models.Model):
         unique=True)
     memory = models.IntegerField(verbose_name="Memória")
     processor = models.IntegerField(verbose_name="Core")
+    disk = models.IntegerField(
+        verbose_name="Tamanho do disco virtual (GB)", default=40)
+    cost = models.FloatField(verbose_name="Custo ($)", default=5)
 
     class Meta:
         verbose_name = (u'Máquina Virtual')
@@ -69,6 +74,9 @@ class UserDroplet(models.Model):
         verbose_name="Status", choices=STATUS_CHOICES, default=1)
     can_remove = models.BooleanField(
         verbose_name="Pode Excluir ?", default=False)
+    initial_password = models.CharField(
+        verbose_name="Senha inicial",
+        unique=True, default="", blank=True, max_length=5)
 
     class Meta:
         verbose_name = (u'Usuário máquina')
@@ -76,12 +84,6 @@ class UserDroplet(models.Model):
 
 
 class AvailableIps(models.Model):
-    user = models.ForeignKey(
-        CloudUser,
-        verbose_name=u"Usuário",
-        related_name="droplet_ip",
-        null=True,
-        blank=True)
     ip = models.CharField(verbose_name="IP", max_length=15, unique=True)
     is_available = models.BooleanField(
         verbose_name="Disponivel ?", default=True)

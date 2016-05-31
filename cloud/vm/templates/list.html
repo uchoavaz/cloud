@@ -10,6 +10,9 @@
 
 </style>
 
+{% if object_list %}
+<h2>Minhas Máquinas</h2>
+
 <div class="container">
   {% for user_droplet in object_list %}
     <div class="pricing-table">
@@ -21,13 +24,23 @@
             <ul>
                 <li><strong>{{user_droplet.droplet.memory}} MB</strong> Memória</li>
                 <li><strong>{{user_droplet.droplet.processor}} Core</strong> CPU</li>
+                <li><strong>{{user_droplet.droplet.disk}} GB</strong> Disco</li>
                 <li><strong>{{user_droplet.get_status_display}}</strong></li>
             </ul>
         </div>
         
-            <div class="col-md-8 col-md-offset-2 col-xs-3 dist" >
-                    <button type="button" {% if user_droplet.can_remove %}{% else %} disabled="disabled" {% endif %}class="btn btn-primary btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#{{user_droplet.pk}}">Excluir</button>
+        <div class="col-sm-offset-2" >
+            <div class="col-md-4  dist" >
+                    <button type="button" {% if user_droplet.can_remove %}{% else %} disabled="disabled" {% endif %}class="btn btn-primary btn btn-danger  " data-toggle="modal" data-target="#{{user_droplet.pk}}">Excluir</button>
             </div>
+
+            <div class="col-md-4  dist" >
+              <a href="{% url 'vm:edit_droplet' user_droplet.pk %}">
+                 <button type="button" {% if user_droplet.can_remove %}{% else %} disabled="disabled" {% endif %} class="btn btn-success">Editar</button>
+              </a>
+
+            </div>
+        </div>
 
     </div>
 
@@ -36,7 +49,7 @@
         <div class="modal-content">
 
           <div class="modal-body">
-                <center><h3>Você realmente deseja exlcuir ?</h3></center>
+                <center><h3>Você realmente deseja excluir ?</h3></center>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
@@ -49,7 +62,14 @@
     </div><!-- /.modal -->
    {% endfor %}
 
-<!-- Large modal -->
+{% else %}
+  <div class="container">
+    <br>
+    <center><span id="color-advice" >Nenhuma máquina disponível<span></center>
+  </div>
+
+
+{% endif %}
 
 
 

@@ -16,19 +16,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'core:home' %}">Cloud</a>
+          <a class="navbar-brand" href="{% url 'core:home' %}"><i class="fa fa-cloud fa-1x"></i>Cloud</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
           <li class="active"><a href="{% url 'vm:droplets' %}">Criar VM</a></li>
-          <li ><a href="{% url 'vm:list' %}">Minhas VM's</a></li>
+          <li class="active"><a href="{% url 'vm:list' %}">Minhas VM's</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+            {% if home %}
+            {% else %}
+                <li ><a href="">Cŕeditos: ${{my_cash}}</a></li>
+            {% endif %}
             <li class="dropdown active">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.username}} <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="">Perfil</a></li>
-                <li><a href="">Mudar Senha</a></li>
+                <li><a href="{% url 'accounts:profile' %}">Perfil</a></li>
+                <li><a href="{% url 'accounts:password' %}">Mudar Senha</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="{% url 'core:logout' %}">Sair</a></li>
               </ul>

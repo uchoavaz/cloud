@@ -1,0 +1,42 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+
+{% block content %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-laptop fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div>Minhas Máquinas</div>
+                                    <div class="huge">{{my_machines}}</div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-dollar fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div>Meus cŕeditos</div>
+                                    <div class="huge">{{my_cash}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+{% endblock %}

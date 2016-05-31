@@ -6,8 +6,9 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib import auth
 from django.shortcuts import redirect
 from accounts.models import CloudUser
+from vm.models import UserDroplet
+from vm.views import BaseView
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.base import TemplateView
 
 
@@ -42,8 +43,15 @@ def logout(request):
     return redirect(reverse_lazy('core:login'))
 
 
-class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'menu.html'
+class HomeView(BaseView, TemplateView):
+    template_name = 'home.html'
     login_url = reverse_lazy('core:login')
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['my_machines'] = UserDroplet.objects.filter(
+            user=self.request.user).count()
+        context['home'] = True
+        return context
 
 home = HomeView.as_view()

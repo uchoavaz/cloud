@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'vm',
     'djcelery',
     'kombu.transport.django',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -130,6 +131,14 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'cloudufpe@gmail.com'
+EMAIL_HOST_PASSWORD = 'cloud2016'
+EMAIL_PORT = 587
+CONTACT_EMAIL = 'cloudufpe@gmail.com'
 
 
 # Static files (CSS, JavaScript, Images)

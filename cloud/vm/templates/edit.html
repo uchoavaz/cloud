@@ -1,0 +1,82 @@
+
+{% extends 'menu.html' %}
+
+{% block content %}
+
+{% load price_edit %}
+<style type="text/css">
+
+
+</style>
+
+<h4>IP da Máquina:<span>  </span><small>{{user_droplet.ip}}</small></h4>
+<h4>Memória:<span>  </span><small>{{user_droplet.droplet.memory}} MB</small></h4>
+<h4>CPU:<span>  </span><small>{{user_droplet.droplet.processor}} Core</small></h4>
+<h4>Sistema Operacional:<span>  </span><small>{{user_droplet.image.name}}</small></h4>
+<button type="button" class="btn btn-default" data-toggle="modal" data-target="#forgotten_password">Esqueceu a senha ?</button>
+<hr>
+
+    <div class="modal fade " id="forgotten_password" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+          <div class="modal-body">
+                <center><h3>A senha será enviada para o seu e-mail</h3></center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+            <a href="{% url 'vm:new_password_droplet' user_droplet.pk %}">
+               <button type="button" class="btn btn-success">ok</button>
+            </a>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
+{% if object_list %}
+<h2>Máquinas Disponíveis</h2>
+<form method="get">
+  {% csrf_token %}
+
+ <div class="container">
+  {% for droplet in object_list %}
+  <div class="pricing-table">
+      <div class="pricing-table-header">
+          <h1>{{droplet.title}}</h1>
+      </div>
+      <input type="radio" name="droplet" id="optionsRadios1" value="{{droplet.pk}}" checked>
+      <div class="pricing-table-content">
+          <ul>
+              <li><strong>{{droplet.memory}} MB</strong> Memória</li>
+              <li><strong>{{droplet.processor}} Core</strong> CPU</li>
+              <li><strong>{{droplet.disk}} GB</strong> Disco</li>
+              <li>$<strong>{% edit droplet.cost user_droplet.droplet.cost %}</strong></li>
+          </ul>
+      </div>
+      
+  </div>
+  {% endfor %}
+ </div>
+ <hr>
+ <button type="submit" class="btn btn-primary btn btn-default btn-lg">Modificar</button>
+  <a href="{% url 'vm:list' %}">
+    <button type="button" class="btn btn-primary btn btn-default btn-lg">Voltar</button>
+ </a>
+</form>
+
+
+
+{% else %}
+  <div class="container">
+    <br>
+    <span id="color-advice" >Nenhuma máquina disponível<span>
+  </div>
+   <hr>
+   <a href="{% url 'vm:list' %}">
+    <button  class="btn btn-primary btn btn-default btn-lg">Voltar</button>
+  </a>
+
+{% endif %}
+{% endblock %}

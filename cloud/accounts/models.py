@@ -41,6 +41,8 @@ class CloudUser(AbstractBaseUser, PermissionsMixin):
         null=True,
         blank=True)
 
+    cash = models.FloatField(verbose_name="Dinheiro Ativo", default=10)
+
     is_staff = models.BooleanField(
         verbose_name=('Status de suporte'), default=False)
 
