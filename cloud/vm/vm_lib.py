@@ -13,13 +13,14 @@ COMMANDS = {
     'endconfigmachine': '  end\n',
     'vmprovision': '  config.vm.provision "shell", inline: <<-SHELL\n',
     'vmmachinename': '  sudo hostnamectl set-hostname "{0}"\n',
+    'vmshell': '  sudo apt-get install openssl shellinabox <<EOF\nY\n  EOF\n',
     'vmpassword': (
         '  sudo passwd vagrant <<EOF\n'
         '{0}\n'
         '{0}\n'
         '  EOF\n'
-        '  SHELL\n'
     ),
+    'vmprovisionend': '  SHELL\n'
 
 }
 
@@ -74,7 +75,9 @@ class VMCreation(Disk):
         'configinit': COMMANDS['configinit'],
         'endconfigmachine': COMMANDS['endconfigmachine'],
         'configmachine': COMMANDS['configmachine'],
-        'vmprovision': COMMANDS['vmprovision']
+        'vmprovision': COMMANDS['vmprovision'],
+        'vmprovisionend': COMMANDS['vmprovisionend'],
+        'vmshell': COMMANDS['vmshell']
     }
 
     VARIABLES = [
@@ -89,6 +92,10 @@ class VMCreation(Disk):
         'vmprovision',
         'vmmachinename',
         'vmpassword',
+        'vmprovisionend',
+        'vmprovision',
+        'vmshell',
+        'vmprovisionend',
 
     ]
 
@@ -201,7 +208,9 @@ class VMEdition(Disk):
     commands = {
         'configinit': COMMANDS['configinit'],
         'endconfigmachine': COMMANDS['endconfigmachine'],
-        'configmachine': COMMANDS['configmachine']
+        'configmachine': COMMANDS['configmachine'],
+        'vmprovision': COMMANDS['vmprovision'],
+        'vmprovisionend': COMMANDS['vmprovisionend']
     }
 
     VARIABLES = [
@@ -212,13 +221,18 @@ class VMEdition(Disk):
         'vname',
         'vmcpu',
         'vmmemory',
-        'endconfigmachine'
+        'endconfigmachine',
+        'vmprovision',
+        'vmmachinename',
+        'vmprovisionend'
     ]
 
 
     def vm_name(self, name):
         self.commands['vmname'] = COMMANDS['vmname'].format(name)
         self.commands['vname'] = COMMANDS['vname'].format(name)
+        self.commands['vmmachinename'] = COMMANDS['vmmachinename'].format(
+            name.replace('.', '_'))
         self.name = name
 
     def vm_ip(self, ip):
@@ -237,7 +251,7 @@ class VMEdition(Disk):
         self.disk = disk
 
     def reset_password(self, password):
-        variable = [
+        variables = [
             'configinit',
             'vmname',
             'vmip',
@@ -246,7 +260,10 @@ class VMEdition(Disk):
             'vmcpu',
             'vmmemory',
             'endconfigmachine',
-            'vmpassword'
+            'vmprovision',
+            'vmmachinename',
+            'vmpassword',
+            'vmprovisionend'
         ]
         self.commands['vmpassword'] = COMMANDS['vmpassword'].format(password)
         self.initial_path = os.getcwd()
@@ -259,7 +276,7 @@ class VMEdition(Disk):
                 os.system("vagrant halt")
                 vagrantfile = open("Vagrantfile", "w")
 
-                for var in variable:
+                for var in variables:
                     vagrantfile.write(self.commands[var])
                 vagrantfile.write('end')
                 vagrantfile.close()
@@ -290,5 +307,6 @@ class VMEdition(Disk):
                 self.set_disk(self.disk, self.name, vm_path)
 
                 os.system("vagrant up")
+                os.system("vagrant provision")
 
         os.chdir(self.initial_path)
